@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int DEFAULT_UPDATE_INTERVAL = 30;
     public static final int FAST_UPDATE_INTERVAL = 5;
     public static final int PERMISSIONS_FINE_LOCATION = 99;
+    String curr_lat, curr_lon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
                 updateUIValues(location);
             }
         };
+
+        btn_aqi.setOnClickListener(v -> {
+            Intent i = new Intent(MainActivity.this, ShowAQIData.class);
+            i.putExtra("LAT", curr_lat);
+            i.putExtra("LONG", curr_lon);
+            startActivity(i);
+        });
 
         sw_gps.setOnClickListener(v -> {
             if (sw_gps.isChecked()) {
@@ -138,9 +148,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // got user permission
-            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, location -> {
-                updateUIValues(location);
-            });
+            fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, this::updateUIValues);
         } else {
             // permission not granted
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -152,6 +160,9 @@ public class MainActivity extends AppCompatActivity {
     private void updateUIValues(Location location) {
         tv_lat.setText(String.valueOf(location.getLatitude()));
         tv_lon.setText(String.valueOf(location.getLongitude()));
+        curr_lat = String.valueOf(location.getLatitude());
+        curr_lon = String.valueOf(location.getLongitude());
+
         Geocoder geocoder = new Geocoder(MainActivity.this);
         try {
             List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);

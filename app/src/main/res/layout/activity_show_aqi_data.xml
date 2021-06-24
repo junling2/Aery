@@ -17,7 +17,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_updatedOn" />
 
     <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/chart_temp"
+        android:id="@+id/chart_pm10"
         android:layout_width="350dp"
         android:layout_height="100dp"
         android:layout_marginTop="44dp"
@@ -27,14 +27,14 @@
         app:layout_constraintTop_toBottomOf="@+id/chart_PM" />
 
     <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/chart_humidity"
+        android:id="@+id/chart_uvi"
         android:layout_width="350dp"
         android:layout_height="100dp"
         android:layout_marginTop="44dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chart_temp" />
+        app:layout_constraintTop_toBottomOf="@+id/chart_pm10" />
 
     <TextView
         android:id="@+id/tv_aqi_scale"
@@ -74,7 +74,7 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_aqi_result" />
 
     <EditText
-        android:id="@+id/editTextDate"
+        android:id="@+id/tv_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
