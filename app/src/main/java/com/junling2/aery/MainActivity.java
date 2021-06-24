@@ -35,11 +35,11 @@ public class MainActivity extends AppCompatActivity {
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationRequest locationRequest;
     LocationCallback locationCallBack;
-    boolean updateOn = false;
     public static final int DEFAULT_UPDATE_INTERVAL = 30;
     public static final int FAST_UPDATE_INTERVAL = 5;
     public static final int PERMISSIONS_FINE_LOCATION = 99;
     String curr_lat, curr_lon;
+    Location currLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,13 +70,6 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        btn_aqi.setOnClickListener(v -> {
-            Intent i = new Intent(MainActivity.this, ShowAQIData.class);
-            i.putExtra("LAT", curr_lat);
-            i.putExtra("LONG", curr_lon);
-            startActivity(i);
-        });
-
         sw_gps.setOnClickListener(v -> {
             if (sw_gps.isChecked()) {
                 locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -86,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
                 tv_sensor.setText("Using Balanced Mode");
             }
         });
+
         updateGPS();
 
         sw_locations_updates.setOnClickListener(v -> {
@@ -95,6 +89,24 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // Location updates off
                 stopLocationUpdates();
+            }
+        });
+
+        btn_aqi.setOnClickListener(v -> {
+            if (currLocation != null) {
+                Intent i = new Intent(MainActivity.this, ShowAQIData.class);
+                i.putExtra("LAT", curr_lat);
+                i.putExtra("LONG", curr_lon);
+                startActivity(i);
+            }
+        });
+
+        btn_map.setOnClickListener(v -> {
+            if (currLocation != null) {
+                Intent i = new Intent(MainActivity.this, MapsActivity.class);
+                i.putExtra("LAT", curr_lat);
+                i.putExtra("LONG", curr_lon);
+                startActivity(i);
             }
         });
     }
@@ -149,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // got user permission
             fusedLocationProviderClient.getLastLocation().addOnSuccessListener(this, this::updateUIValues);
+            currLocation = fusedLocationProviderClient.getLastLocation().getResult();
         } else {
             // permission not granted
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
